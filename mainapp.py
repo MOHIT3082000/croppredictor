@@ -1,31 +1,30 @@
 import streamlit as st
-import pickle
 import numpy as np
+import pickle  # Assuming you're loading a trained model
 
-# Load the model
-model_path = 'model_compressed.pkl'
-with open(model_path, 'rb') as file:
+# Load trained model (ensure 'model.pkl' exists)
+with open("model_compressed.pkl", "rb") as file:
     model = pickle.load(file)
 
-# Streamlit interface
-st.title('Crop Yield Prediction')
+# Streamlit UI
+st.title("Crop Prediction Model")
 
-# Input parameters
-N = st.number_input('Nitrogen content (N)', min_value=0, max_value=300, value=50)
-P = st.number_input('Phosphorus content (P)', min_value=0, max_value=300, value=50)
-K = st.number_input('Potassium content (K)', min_value=0, max_value=300, value=50)
-temperature = st.number_input('Temperature (°C)', min_value=-10.0, max_value=50.0, value=25.0)
-humidity = st.number_input('Humidity (%)', min_value=0.0, max_value=100.0, value=50.0)
-ph = st.number_input('pH value', min_value=0.0, max_value=14.0, value=7.0)
-rainfall = st.number_input('Rainfall (mm)', min_value=0.0, max_value=500.0, value=100.0)
+# User input fields
+N = st.number_input("Nitrogen", min_value=0.0, format="%.2f")
+P = st.number_input("Phosphorus", min_value=0.0, format="%.2f")
+K = st.number_input("Potassium", min_value=0.0, format="%.2f")
+temperature = st.number_input("Temperature", format="%.2f")
+humidity = st.number_input("Humidity", format="%.2f")
+ph = st.number_input("pH Level", format="%.2f")
+rainfall = st.number_input("Rainfall", format="%.2f")
 
 # Prediction button
-if st.button('Predict'):
+if st.button("Predict"):
+    # Prepare input data
+    input_data = np.array([N, P, K, temperature, humidity, ph, rainfall]).reshape(1, -1)
+    
     # Make prediction
-    input_data = np.array([[N, P, K, temperature, humidity, ph, rainfall]])
     prediction = model.predict(input_data)
 
-    st.write('Predicted Label:', prediction[0])
-
-if __name__ == '__main__':
-    st.run()
+    # Display prediction
+    st.write("Predicted Label:", prediction[0])
